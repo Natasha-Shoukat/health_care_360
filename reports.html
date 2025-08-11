@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Reports - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/reports.css">
+    <!-- PDF libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html" class="active">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html">
+                        <i class="fas fa-robot"></i> Health Chatbot
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html#add-health-data">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Content -->
+            <div class="reports-content">
+                <h2 class="section-title">Health Reports</h2>
+                
+                <!-- Date Range Form -->
+                <div class="date-range-form">
+                    <div class="form-group">
+                        <label for="start-date">Start Date</label>
+                        <input type="date" id="start-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end-date">End Date</label>
+                        <input type="date" id="end-date" required>
+                    </div>
+                    
+                    <button id="generate-btn" class="generate-btn">
+                        <i class="fas fa-sync-alt"></i> Generate Report
+                    </button>
+                    
+                    <button id="download-btn" class="download-btn" disabled>
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                </div>
+                
+                <!-- Health Records Table -->
+                <div class="health-records">
+                    <h3 class="section-title">Health Records</h3>
+                    
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heart Rate</th>
+                                <th>Blood Pressure</th>
+                                <th>Oxygen Level</th>
+                                <th>Temperature</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="records-table-body">
+                            <!-- Records will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/reports.js"></script>
+    <script>
+        // Add event listener to redirect to dashboard with health data form
+        document.addEventListener('DOMContentLoaded', function() {
+            const addHealthDataLink = document.querySelector('a[href="dashboard.html#add-health-data"]');
+            if (addHealthDataLink) {
+                addHealthDataLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Store a flag in localStorage to indicate we want to show the health data form
+                    localStorage.setItem('showHealthDataForm', 'true');
+                    // Navigate to dashboard
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

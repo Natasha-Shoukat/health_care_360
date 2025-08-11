@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html" class="active">
+                        <i class="fas fa-robot"></i> AI Assistant
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html#add-health-data">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chatbot Content -->
+            <div class="chatbot-content">
+                <h2 class="section-title">AI Assistant</h2>
+                <p class="section-description">Ask me anything - health questions, general knowledge, current events, or any topic you're curious about!</p>
+                
+                <div class="chat-container">
+                    <div class="chat-messages">
+                        <!-- Messages will be added here dynamically -->
+                        
+                        <!-- Typing indicator -->
+                        <div class="typing-indicator">
+                            <div class="typing-dots">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" class="chat-input" placeholder="Ask me anything...">
+                        <button id="send-btn" class="send-btn">
+                            Send <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/chatbot.js"></script>
+    <script>
+        // Add event listener to redirect to dashboard with health data form
+        document.addEventListener('DOMContentLoaded', function() {
+            const addHealthDataLink = document.querySelector('a[href="dashboard.html#add-health-data"]');
+            if (addHealthDataLink) {
+                addHealthDataLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Store a flag in localStorage to indicate we want to show the health data form
+                    localStorage.setItem('showHealthDataForm', 'true');
+                    // Navigate to dashboard
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

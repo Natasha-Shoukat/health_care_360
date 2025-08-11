@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Welcome Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 26, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(15, 15, 35, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 230, 255, 0.3), 
+                        inset 0 0 15px rgba(0, 230, 255, 0.2);
+            border: 1px solid rgba(0, 230, 255, 0.2);
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(0, 230, 255, 0.5);
+        }
+
+        .modal-content p {
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #00a3cc, #0066cc);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 230, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* 3D Animation for Modal */
+        .modal-content {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .modal-overlay.active .modal-content {
+            animation: modalOpen 0.6s ease-out forwards;
+        }
+
+        @keyframes modalOpen {
+            0% { transform: scale(0.8) rotateX(30deg); opacity: 0; }
+            100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+        }
+
+        /* Health Data Form Styles */
+        .health-data-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .health-data-content.active {
+            display: block;
+        }
+
+        .health-data-form-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-data-form-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(0, 230, 255, 0.05) 0%,
+                rgba(0, 230, 255, 0) 50%,
+                rgba(255, 0, 255, 0.05) 100%
+            );
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .health-data-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 230, 255, 0.3);
+        }
+
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .save-btn,
+        .view-reports-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .save-btn {
+            background: linear-gradient(45deg, var(--primary-color), #0099cc);
+            color: var(--text-light);
+        }
+
+        .save-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 230, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .view-reports-btn {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-light);
+            border: 1px solid var(--border-glow);
+        }
+
+        .view-reports-btn:hover {
+            background: rgba(0, 230, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 230, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .save-btn::before, .view-reports-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .save-btn:hover::before, .view-reports-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Success Modal */
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-icon.success {
+            color: #1cc88a;
+            text-shadow: 0 0 15px rgba(28, 200, 138, 0.5);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .dashboard-overview {
+            display: block;
+        }
+
+        .dashboard-overview.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" id="dashboard-link" class="active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html">
+                        <i class="fas fa-robot"></i> Health Chatbot
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="add-health-data-link">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-overview" id="dashboard-overview">
+                <h2 class="section-title">Health Overview</h2>
+                
+                <!-- Vital Signs Cards -->
+                <div class="vital-signs">
+                    <div class="vital-card">
+                        <div class="vital-card-title">Heart Rate</div>
+                        <div class="vital-card-value" id="heart-rate-value">75</div>
+                        <div class="vital-card-unit">BPM</div>
+                    </div>
+                    
+                    <div class="vital-card">
+                        <div class="vital-card-title">Blood Pressure</div>
+                        <div class="vital-card-value" id="blood-pressure-value">120/80</div>
+                        <div class="vital-card-unit">mmHg</div>
+                    </div>
+                    
+                    <div class="vital-card">
+                        <div class="vital-card-title">Oxygen Level</div>
+                        <div class="vital-card-value" id="oxygen-level-value">98</div>
+                        <div class="vital-card-unit">%</div>
+                    </div>
+                    
+                    <div class="vital-card">
+                        <div class="vital-card-title">Temperature</div>
+                        <div class="vital-card-value" id="temperature-value">36.8</div>
+                        <div class="vital-card-unit">°C</div>
+                    </div>
+                </div>
+                
+                <!-- Health Graphs -->
+                <div class="health-graphs">
+                    <h2 class="section-title">Health Trends</h2>
+                    
+                    <div class="graph-filters">
+                        <div class="filter-option" id="filter-today">Today</div>
+                        <div class="filter-option active" id="filter-week">Last 7 Days</div>
+                        <div class="filter-option" id="filter-custom">Custom Range</div>
+                    </div>
+                    
+                    <div class="graphs-grid">
+                        <div class="graph-card">
+                            <div class="graph-title">Heart Rate</div>
+                            <div class="chart-container">
+                                <canvas id="heart-rate-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-card">
+                            <div class="graph-title">Blood Pressure</div>
+                            <div class="chart-container">
+                                <canvas id="blood-pressure-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-card">
+                            <div class="graph-title">Oxygen Level</div>
+                            <div class="chart-container">
+                                <canvas id="oxygen-level-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-card">
+                            <div class="graph-title">Temperature</div>
+                            <div class="chart-container">
+                                <canvas id="temperature-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Health Data Content -->
+            <div class="health-data-content" id="health-data-content">
+                <h2 class="section-title">Add Health Data</h2>
+                
+                <div class="health-data-form-container">
+                    <form id="health-data-form" class="health-data-form">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="heart-rate">Heart Rate (BPM)</label>
+                                <input type="number" id="heart-rate" placeholder="Enter heart rate" min="40" max="220" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="temperature">Temperature (°C)</label>
+                                <input type="number" id="temperature" placeholder="Enter temperature" min="35" max="42" step="0.1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="blood-pressure-systolic">Blood Pressure (Systolic)</label>
+                                <input type="number" id="blood-pressure-systolic" placeholder="Systolic" min="70" max="200" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="blood-pressure-diastolic">Blood Pressure (Diastolic)</label>
+                                <input type="number" id="blood-pressure-diastolic" placeholder="Diastolic" min="40" max="130" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="oxygen-level">Oxygen Level (%)</label>
+                            <input type="number" id="oxygen-level" placeholder="Enter oxygen level" min="70" max="100" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" placeholder="Add any additional notes about your health"></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">
+                                <i class="fas fa-save"></i> Save Data
+                            </button>
+                            <button type="button" class="view-reports-btn" id="view-reports-btn">
+                                <i class="fas fa-file-medical-alt"></i> View Reports
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal-content">
+            <h2>Welcome to HealthCare360!</h2>
+            <p>Hello <span id="welcome-username">there</span>, we're glad to see you again.</p>
+            <p>Your personal health dashboard is ready with your latest data.</p>
+            <button class="modal-btn" id="welcomeBtn">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Success!</h2>
+            <p>Your health data has been saved successfully.</p>
+            <div class="modal-actions">
+                <button class="modal-btn" id="add-more-btn">Add More Data</button>
+                <button class="modal-btn primary" id="goto-reports-btn">Go to Reports</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements
+            const dashboardLink = document.getElementById('dashboard-link');
+            const addHealthDataLink = document.getElementById('add-health-data-link');
+            const dashboardOverview = document.getElementById('dashboard-overview');
+            const healthDataContent = document.getElementById('health-data-content');
+            const healthDataForm = document.getElementById('health-data-form');
+            const successModal = document.getElementById('success-modal');
+            const addMoreBtn = document.getElementById('add-more-btn');
+            const gotoReportsBtn = document.getElementById('goto-reports-btn');
+            const viewReportsBtn = document.getElementById('view-reports-btn');
+            
+            // Set current date as default
+            const dateInput = document.getElementById('date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+            
+            // Toggle between dashboard and health data form
+            dashboardLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardOverview.classList.remove('hidden');
+                healthDataContent.classList.remove('active');
+                
+                // Update active class
+                dashboardLink.classList.add('active');
+                addHealthDataLink.classList.remove('active');
+            });
+            
+            addHealthDataLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                dashboardOverview.classList.add('hidden');
+                healthDataContent.classList.add('active');
+                
+                // Update active class
+                dashboardLink.classList.remove('active');
+                addHealthDataLink.classList.add('active');
+            });
+            
+            // Handle form submission
+            if (healthDataForm) {
+                healthDataForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const date = document.getElementById('date').value;
+                    const heartRate = document.getElementById('heart-rate').value;
+                    const temperature = document.getElementById('temperature').value;
+                    const bloodPressureSystolic = document.getElementById('blood-pressure-systolic').value;
+                    const bloodPressureDiastolic = document.getElementById('blood-pressure-diastolic').value;
+                    const oxygenLevel = document.getElementById('oxygen-level').value;
+                    const notes = document.getElementById('notes').value;
+                    
+                    // Create health data object
+                    const healthData = {
+                        id: generateUniqueId(),
+                        date: date,
+                        heartRate: heartRate,
+                        temperature: temperature,
+                        bloodPressure: {
+                            systolic: bloodPressureSystolic,
+                            diastolic: bloodPressureDiastolic
+                        },
+                        oxygenLevel: oxygenLevel,
+                        notes: notes,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Save health data to localStorage
+                    saveHealthData(healthData);
+                    
+                    // Update dashboard data
+                    updateDashboardData(healthData);
+                    
+                    // Update dashboard values
+                    document.getElementById('heart-rate-value').textContent = heartRate;
+                    document.getElementById('blood-pressure-value').textContent = `${bloodPressureSystolic}/${bloodPressureDiastolic}`;
+                    document.getElementById('oxygen-level-value').textContent = oxygenLevel;
+                    document.getElementById('temperature-value').textContent = temperature;
+                    
+                    // Show success modal
+                    successModal.classList.add('active');
+                });
+            }
+            
+            // Modal buttons event listeners
+            if (addMoreBtn) {
+                addMoreBtn.addEventListener('click', function() {
+                    successModal.classList.remove('active');
+                    healthDataForm.reset();
+                    dateInput.value = today;
+                    
+                    // After adding data, show the dashboard with updated charts
+                    setTimeout(() => {
+                        dashboardLink.click();
+                    }, 100);
+                });
+            }
+            
+            if (gotoReportsBtn) {
+                gotoReportsBtn.addEventListener('click', function() {
+                    window.location.href = 'reports.html';
+                });
+            }
+            
+            if (viewReportsBtn) {
+                viewReportsBtn.addEventListener('click', function() {
+                    window.location.href = 'reports.html';
+                });
+            }
+            
+            // After form submission, refresh the dashboard data and charts
+            successModal.addEventListener('click', function(e) {
+                // If clicking outside the modal content
+                if (e.target === successModal) {
+                    successModal.classList.remove('active');
+                    
+                    // Switch back to dashboard view and refresh charts
+                    dashboardLink.click();
+                }
+            });
+            
+            // Generate a unique ID for health data entries
+            function generateUniqueId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            }
+            
+            // Save health data to localStorage
+            function saveHealthData(healthData) {
+                // Get current username
+                const currentUsername = localStorage.getItem('username');
+                if (!currentUsername) {
+                    console.error('No user is currently logged in');
+                    return;
+                }
+                
+                // Get all user health data or create a new object
+                const allUserHealthData = JSON.parse(localStorage.getItem('allUserHealthData') || '{}');
+                
+                // Initialize user's health data if it doesn't exist
+                if (!allUserHealthData[currentUsername]) {
+                    allUserHealthData[currentUsername] = {
+                        healthLogs: []
+                    };
+                }
+                
+                // Create entry in the format expected by dashboard.js
+                const entry = {
+                    id: healthData.id,
+                    date: healthData.date,
+                    heartRate: parseInt(healthData.heartRate),
+                    bloodPressureSystolic: parseInt(healthData.bloodPressure.systolic),
+                    bloodPressureDiastolic: parseInt(healthData.bloodPressure.diastolic),
+                    oxygenLevel: parseInt(healthData.oxygenLevel),
+                    temperature: parseFloat(healthData.temperature),
+                    notes: healthData.notes,
+                    timestamp: healthData.timestamp
+                };
+                
+                // Check if we already have an entry for this date
+                const existingEntryIndex = allUserHealthData[currentUsername].healthLogs.findIndex(
+                    log => log.date === entry.date
+                );
+                
+                if (existingEntryIndex >= 0) {
+                    // Update existing entry
+                    allUserHealthData[currentUsername].healthLogs[existingEntryIndex] = entry;
+                } else {
+                    // Add new health data at the beginning of the array
+                    allUserHealthData[currentUsername].healthLogs.unshift(entry);
+                }
+                
+                // Save updated health data back to localStorage
+                localStorage.setItem('allUserHealthData', JSON.stringify(allUserHealthData));
+                
+                console.log('Health data saved:', entry);
+                console.log('All health data:', allUserHealthData[currentUsername].healthLogs);
+                
+                // Also save to reports data for backward compatibility
+                saveToReports(healthData, currentUsername);
+                
+                return entry;
+            }
+            
+            // Save health data to reports
+            function saveToReports(healthData, username) {
+                const userReportsKey = `reports_${username}`;
+                let userReports = JSON.parse(localStorage.getItem(userReportsKey)) || [];
+                
+                // Create a report object
+                const report = {
+                    id: healthData.id,
+                    type: 'health_data',
+                    title: `Health Data - ${formatDate(healthData.date)}`,
+                    date: healthData.date,
+                    data: {
+                        id: healthData.id,
+                        date: healthData.date,
+                        heartRate: parseInt(healthData.heartRate),
+                        bloodPressureSystolic: parseInt(healthData.bloodPressure.systolic),
+                        bloodPressureDiastolic: parseInt(healthData.bloodPressure.diastolic),
+                        oxygenLevel: parseInt(healthData.oxygenLevel),
+                        temperature: parseFloat(healthData.temperature),
+                        notes: healthData.notes,
+                        timestamp: healthData.timestamp
+                    },
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add new report
+                userReports.push(report);
+                
+                // Save updated reports back to localStorage
+                localStorage.setItem(userReportsKey, JSON.stringify(userReports));
+            }
+            
+            // Update dashboard data with the latest health metrics
+            function updateDashboardData(healthData) {
+                console.log('Updating dashboard with new health data');
+                
+                // Get the current user's health data
+                const currentUsername = localStorage.getItem('username');
+                const allUserHealthData = JSON.parse(localStorage.getItem('allUserHealthData') || '{}');
+                
+                if (allUserHealthData[currentUsername] && 
+                    allUserHealthData[currentUsername].healthLogs && 
+                    allUserHealthData[currentUsername].healthLogs.length > 0) {
+                    
+                    const healthLogs = allUserHealthData[currentUsername].healthLogs;
+                    console.log('Available health logs:', healthLogs);
+                    
+                    // Check if we need to initialize charts (first data entry)
+                    const noDataMessage = document.querySelector('.no-data-message');
+                    if (noDataMessage) {
+                        // Remove no data message
+                        noDataMessage.remove();
+                        
+                        // Show charts and filters
+                        document.querySelectorAll('.chart-container').forEach(chart => {
+                            chart.style.display = 'block';
+                        });
+                        
+                        const filterOptions = document.querySelector('.filter-options') || document.querySelector('.graph-filters');
+                        if (filterOptions) {
+                            filterOptions.style.display = 'flex';
+                        }
+                    }
+                    
+                    // Directly call initCharts with the latest data
+                    if (typeof initCharts === 'function') {
+                        initCharts(healthLogs);
+                    } else {
+                        console.error('initCharts function not found');
+                    }
+                }
+                
+                // Refresh the dashboard view
+                setTimeout(() => {
+                    const dashboardLink = document.getElementById('dashboard-link');
+                    if (dashboardLink) {
+                        dashboardLink.click();
+                    }
+                }, 500);
+            }
+            
+            // Format date for display
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            }
+
+            // Initialize charts on page load
+            window.addEventListener('load', function() {
+                // Make sure dashboard.js has loaded
+                setTimeout(() => {
+                    // Refresh the dashboard view to initialize charts
+                    if (typeof initDashboard === 'function') {
+                        initDashboard();
+                    }
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

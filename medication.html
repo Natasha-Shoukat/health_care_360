@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Reminders - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/medication.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html">
+                        <i class="fas fa-robot"></i> Health Chatbot
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html" class="active">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html#add-health-data">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medication Content -->
+            <div class="medication-content">
+                <h2 class="section-title">Medication Reminders</h2>
+                
+                <!-- Add Medication Form -->
+                <div class="add-medication">
+                    <h3 class="form-title">Add New Medication</h3>
+                    
+                    <form id="add-med-form">
+                        <div class="form-group">
+                            <label for="med-name">Medication Name</label>
+                            <input type="text" id="med-name" placeholder="Enter medication name">
+                            <div class="error-message" id="med-name-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="med-dosage">Dosage</label>
+                            <input type="text" id="med-dosage" placeholder="e.g., 10mg, 1 tablet">
+                            <div class="error-message" id="med-dosage-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="med-time">Time to Take</label>
+                            <input type="time" id="med-time">
+                            <div class="error-message" id="med-time-error"></div>
+                            
+                            <button type="button" id="add-time-btn" class="add-time-btn">
+                                <i class="fas fa-plus"></i> Add Time
+                            </button>
+                            
+                            <div class="time-slots" id="time-slots">
+                                <!-- Time slots will be added here dynamically -->
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="add-med-btn">
+                            <i class="fas fa-plus-circle"></i> Add Medication
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Medication List -->
+                <div class="medication-list">
+                    <h3 class="list-title">Your Medications</h3>
+                    
+                    <div class="med-items" id="med-items">
+                        <!-- Medication items will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Medication Alert -->
+    <div class="med-alert" id="med-alert">
+        <div class="alert-header">
+            <div class="alert-title">Medication Reminder</div>
+            <button class="close-alert" id="close-alert">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="alert-content">
+            <p>It's time to take your medication:</p>
+            <p><span class="alert-med" id="alert-med-name">Medication Name</span> - <span id="alert-med-dosage">Dosage</span></p>
+            <p>Scheduled for: <span class="alert-time" id="alert-med-time">Time</span></p>
+        </div>
+        
+        <div class="alert-actions">
+            <button class="alert-btn take-btn" id="take-btn">
+                <i class="fas fa-check"></i> Mark as Taken
+            </button>
+            <button class="alert-btn snooze-btn" id="snooze-btn">
+                <i class="fas fa-bell-slash"></i> Snooze (5 min)
+            </button>
+        </div>
+    </div>
+    
+    <!-- Edit Medication Modal -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Medication</h3>
+                <button class="close-modal" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="edit-med-form">
+                <div class="form-group">
+                    <label for="edit-med-name">Medication Name</label>
+                    <input type="text" id="edit-med-name" placeholder="Enter medication name">
+                    <div class="error-message" id="edit-med-name-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-med-dosage">Dosage</label>
+                    <input type="text" id="edit-med-dosage" placeholder="e.g., 10mg, 1 tablet">
+                    <div class="error-message" id="edit-med-dosage-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-med-time">Time to Take</label>
+                    <input type="time" id="edit-med-time">
+                    <div class="error-message" id="edit-med-time-error"></div>
+                    
+                    <button type="button" id="edit-add-time-btn" class="add-time-btn">
+                        <i class="fas fa-plus"></i> Add Time
+                    </button>
+                    
+                    <div class="time-slots" id="edit-time-slots">
+                        <!-- Time slots will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="modal-btn cancel-btn" id="cancel-btn">Cancel</button>
+                    <button type="submit" class="modal-btn save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/medication.js"></script>
+    <script>
+        // Add event listener to redirect to dashboard with health data form
+        document.addEventListener('DOMContentLoaded', function() {
+            const addHealthDataLink = document.querySelector('a[href="dashboard.html#add-health-data"]');
+            if (addHealthDataLink) {
+                addHealthDataLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Store a flag in localStorage to indicate we want to show the health data form
+                    localStorage.setItem('showHealthDataForm', 'true');
+                    // Navigate to dashboard
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

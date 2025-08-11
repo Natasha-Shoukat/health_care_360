@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html">
+                        <i class="fas fa-robot"></i> Health Chatbot
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html#add-health-data">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html" class="active">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <h2 class="section-title">User Profile & Settings</h2>
+                
+                <!-- Profile Card -->
+                <div class="profile-card">
+                    <h3 class="card-title"><i class="fas fa-user-edit"></i> Personal Information</h3>
+                    
+                    <form id="profile-form" class="profile-form">
+                        <div class="form-group">
+                            <label for="profile-name">Full Name</label>
+                            <input type="text" id="profile-name" placeholder="Enter your full name">
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-email">Email Address</label>
+                            <input type="email" id="profile-email" placeholder="Enter your email address">
+                            <div class="error-message" id="email-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-phone">Phone Number</label>
+                            <input type="tel" id="profile-phone" placeholder="Enter your phone number">
+                            <div class="error-message" id="phone-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-password">Password</label>
+                            <input type="password" id="profile-password" placeholder="Enter new password (leave blank to keep current)">
+                            <div class="error-message" id="password-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-confirm-password">Confirm Password</label>
+                            <input type="password" id="profile-confirm-password" placeholder="Confirm new password">
+                            <div class="error-message" id="confirm-password-error"></div>
+                        </div>
+                        
+                        <div class="success-message" id="profile-success"></div>
+                        
+                        <button type="submit" class="save-profile-btn">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Settings Card -->
+                <div class="settings-card">
+                    <h3 class="card-title"><i class="fas fa-cog"></i> Application Settings</h3>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-title">Dark Mode</div>
+                                <div class="setting-description">Switch between dark and light theme</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="theme-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <div class="setting-title">Notifications</div>
+                                <div class="setting-description">Enable or disable all notifications</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notifications-toggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Danger Zone Card -->
+                <div class="profile-card danger-zone">
+                    <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+                    
+                    <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+                    
+                    <button id="delete-account-btn" class="delete-account-btn">
+                        <i class="fas fa-trash-alt"></i> Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Account</h3>
+                <button class="close-modal" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" id="cancel-btn">Cancel</button>
+                <button class="modal-btn confirm-btn" id="confirm-btn">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/profile.js"></script>
+    <script>
+        // Add event listener to redirect to dashboard with health data form
+        document.addEventListener('DOMContentLoaded', function() {
+            const addHealthDataLink = document.querySelector('a[href="dashboard.html#add-health-data"]');
+            if (addHealthDataLink) {
+                addHealthDataLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Store a flag in localStorage to indicate we want to show the health data form
+                    localStorage.setItem('showHealthDataForm', 'true');
+                    // Navigate to dashboard
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

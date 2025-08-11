@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Analytics - HealthCare360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">HealthCare360</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-file-medical-alt"></i> Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="chatbot.html">
+                        <i class="fas fa-robot"></i> Health Chatbot
+                    </a>
+                </li>
+                <li>
+                    <a href="medication.html">
+                        <i class="fas fa-pills"></i> Medication
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html" class="active">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html#add-health-data">
+                        <i class="fas fa-plus-circle"></i> Add Health Data
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span>Welcome, <span id="username">User</span></span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Content -->
+            <div class="analytics-content">
+                <h2 class="section-title">7-Day Health Analytics</h2>
+                
+                <!-- Stat Cards -->
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Heart Rate</div>
+                            <div class="stat-icon hr-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value hr-value" id="hr-value">75</div>
+                        <div class="stat-unit">BPM</div>
+                        <div class="stat-trend" id="hr-trend">
+                            <i class="fas fa-minus"></i> No change from yesterday
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Blood Pressure</div>
+                            <div class="stat-icon bp-icon">
+                                <i class="fas fa-stethoscope"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value bp-value" id="bp-value">120/80</div>
+                        <div class="stat-unit">mmHg</div>
+                        <div class="stat-trend" id="bp-trend">
+                            <i class="fas fa-minus"></i> No change from yesterday
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Oxygen Level</div>
+                            <div class="stat-icon o2-icon">
+                                <i class="fas fa-lungs"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value o2-value" id="o2-value">98</div>
+                        <div class="stat-unit">%</div>
+                        <div class="stat-trend" id="o2-trend">
+                            <i class="fas fa-minus"></i> No change from yesterday
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Temperature</div>
+                            <div class="stat-icon temp-icon">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value temp-value" id="temp-value">36.8</div>
+                        <div class="stat-unit">°C</div>
+                        <div class="stat-trend" id="temp-trend">
+                            <i class="fas fa-minus"></i> No change from yesterday
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Chart Card -->
+                <div class="main-chart-card">
+                    <div class="chart-container">
+                        <canvas id="main-chart"></canvas>
+                    </div>
+                    
+                    <!-- Toggle Controls -->
+                    <div class="toggle-controls">
+                        <button class="toggle-btn hr-toggle" data-index="0">
+                            <i class="fas fa-heartbeat"></i> Heart Rate
+                        </button>
+                        <button class="toggle-btn bp-sys-toggle" data-index="1">
+                            <i class="fas fa-arrow-up"></i> BP Systolic
+                        </button>
+                        <button class="toggle-btn bp-dia-toggle" data-index="2">
+                            <i class="fas fa-arrow-down"></i> BP Diastolic
+                        </button>
+                        <button class="toggle-btn o2-toggle" data-index="3">
+                            <i class="fas fa-lungs"></i> Oxygen Level
+                        </button>
+                        <button class="toggle-btn temp-toggle" data-index="4">
+                            <i class="fas fa-thermometer-half"></i> Temperature
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/analytics.js"></script>
+    <script>
+        // Add event listener to redirect to dashboard with health data form
+        document.addEventListener('DOMContentLoaded', function() {
+            const addHealthDataLink = document.querySelector('a[href="dashboard.html#add-health-data"]');
+            if (addHealthDataLink) {
+                addHealthDataLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Store a flag in localStorage to indicate we want to show the health data form
+                    localStorage.setItem('showHealthDataForm', 'true');
+                    // Navigate to dashboard
+                    window.location.href = 'dashboard.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

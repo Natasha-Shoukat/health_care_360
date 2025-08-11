@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCare360 - Smart Home Health Monitoring System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a1a;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(25, 25, 50, 0.8) 0%, rgba(10, 10, 26, 0.9) 70%);
+            z-index: -1;
+        }
+
+        .splash-container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(15, 15, 35, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 230, 255, 0.2), 
+                        inset 0 0 15px rgba(0, 230, 255, 0.1);
+            border: 1px solid rgba(0, 230, 255, 0.1);
+            animation: fadeIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(0, 230, 255, 0.1) 0%,
+                rgba(0, 230, 255, 0) 50%,
+                rgba(255, 0, 255, 0.1) 100%
+            );
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 10px #00e6ff, 0 0 20px #00e6ff, 0 0 30px #00e6ff;
+            animation: pulse 2s infinite, scaleIn 1s ease-out;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .loading-container {
+            margin-top: 30px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(0, 230, 255, 0.1);
+            border-top: 5px solid #00e6ff;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #00e6ff, #ff00ff);
+            box-shadow: 0 0 10px rgba(0, 230, 255, 0.7);
+            animation: progress 3s linear forwards;
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            color: #a0a0a0;
+        }
+
+        .fallback-message {
+            display: none;
+            color: #ff00ff;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+        }
+
+        .action-links {
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        .action-links a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00a3cc, #0066cc);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-links a:hover {
+            box-shadow: 0 0 20px rgba(0, 230, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px #00e6ff, 0 0 20px #00e6ff; }
+            50% { text-shadow: 0 0 15px #00e6ff, 0 0 30px #00e6ff, 0 0 40px #00e6ff; }
+            100% { text-shadow: 0 0 10px #00e6ff, 0 0 20px #00e6ff; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container" id="splash">
+        <div class="logo">HealthCare360</div>
+        <div class="tagline" id="tagline"></div>
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="loading-text">Loading your health dashboard...</div>
+            <div class="fallback-message" id="fallback">Still loading... Please wait a moment.</div>
+        </div>
+        <div class="action-links">
+            <a href="login.html" id="loginLink">Login</a>
+            <a href="register.html" id="registerLink">Register</a>
+        </div>
+    </div>
+
+    <script>
+        // Typing animation for tagline
+        const tagline = "Empowering Health, Digitally.";
+        const taglineElement = document.getElementById('tagline');
+        let i = 0;
+        
+        function typeWriter() {
+            if (i < tagline.length) {
+                taglineElement.innerHTML += tagline.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        
+        // Start typing animation after a small delay
+        setTimeout(typeWriter, 500);
+        
+        // Show fallback message if loading takes too long
+        setTimeout(() => {
+            document.getElementById('fallback').style.display = 'block';
+        }, 5000);
+        
+        // Create default admin user if no users exist
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        if (users.length === 0) {
+            const defaultAdmin = {
+                fullname: 'Admin User',
+                email: 'admin@healthcare360.com',
+                username: 'admin',
+                password: 'admin123'
+            };
+            users.push(defaultAdmin);
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        
+        // Show action links after a delay
+        setTimeout(() => {
+            document.querySelector('.action-links').style.opacity = '1';
+        }, 2500);
+        
+        // Handle direct navigation via links instead of automatic redirect
+        document.getElementById('loginLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            const splash = document.getElementById('splash');
+            splash.style.animation = 'fadeOut 0.5s forwards';
+            
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        });
+        
+        document.getElementById('registerLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            const splash = document.getElementById('splash');
+            splash.style.animation = 'fadeOut 0.5s forwards';
+            
+            setTimeout(() => {
+                window.location.href = 'register.html';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
